@@ -23,6 +23,6 @@ if __name__ == "__main__":
     model_answer = model.predict_on_image(image=image_path, question=question)
     
     # отвечаем на вопрос о по нескольким картинкам сразу (пока не реализован)
-    # model_answer = model.predict_on_images(image=image_path, question=question)
+    # model_answer = model.predict_on_images(images=[image_path1, image_path2], question=question)
     
     print(model_answer)
