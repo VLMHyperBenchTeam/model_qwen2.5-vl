@@ -28,7 +28,7 @@ P.S. Укажите одно из следующих названий при и�
 
 Для сборки `Docker image` выполним команду:
 ```
-docker build -t qwenvl:2-cu124 -f docker/Dockerfile-cu124 .
+docker build -t ghcr.io/vlmhyperbenchteam/qwen2-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0 -f docker/Dockerfile-cu124 .
 ```
 
 ## Run Docker Container
@@ -39,7 +39,7 @@ docker run \
     --gpus all \
     -it \
     -v ./src:/workspace \
-    qwenvl:2-cu124
+    ghcr.io/vlmhyperbenchteam/qwen2-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0
 ```
 
 Нам откроется терминал внутри `Docker Container`.
