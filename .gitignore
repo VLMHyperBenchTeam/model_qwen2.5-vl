@@ -127,4 +127,4 @@ dmypy.json
 cython_debug/
 
 # Hugging Face model cache
-src/model_cache/*
+model_cache/*

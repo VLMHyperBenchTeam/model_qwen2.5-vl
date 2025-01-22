@@ -38,7 +38,7 @@ docker build -t ghcr.io/vlmhyperbenchteam/qwen2-vl:ubuntu22.04-cu124-torch2.4.0_
 docker run \
     --gpus all \
     -it \
-    -v ./src:/workspace \
+    -v .:/workspace \
     ghcr.io/vlmhyperbenchteam/qwen2-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0
 ```
 
