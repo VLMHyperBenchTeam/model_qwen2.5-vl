@@ -112,7 +112,7 @@ python run_predict.py
 
 Скан документа найден случайным поиском в интернете, и скорее всего не является реальным счетом на оплату.
 
-![schet_na_oplatu](src/example_docs/schet_na_oplatu.png)
+![schet_na_oplatu](example_docs/schet_na_oplatu.png)
 
 ### вопросы по данному документу и ответы модели на них
 ```
