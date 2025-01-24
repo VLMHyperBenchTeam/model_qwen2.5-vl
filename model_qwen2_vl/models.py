@@ -13,18 +13,22 @@ class Qwen2VLModel(ModelInterface):
         system_prompt="",
         cache_dir="model_cache",
     ):
+        self.model_name = model_name
+        self.system_prompt = system_prompt
+        self.cache_dir = cache_dir
+        
         # default: Load the model on the available device(s)
-        model_name = f"Qwen/{model_name}"
+        model_path = f"Qwen/{model_path}"
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            model_name,
+            model_path,
             torch_dtype=torch.bfloat16,
             device_map="auto",
             attn_implementation="flash_attention_2",
-            cache_dir=cache_dir,
+            cache_dir=self.cache_dir,
         )
 
         # default processor
-        self.processor = AutoProcessor.from_pretrained(model_name, cache_dir=cache_dir)
+        self.processor = AutoProcessor.from_pretrained(model_path, cache_dir=cache_dir)
 
     @staticmethod
     def get_message(image, question):
