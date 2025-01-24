@@ -18,7 +18,7 @@ class Qwen2VLModel(ModelInterface):
         self.cache_dir = cache_dir
         
         # default: Load the model on the available device(s)
-        model_path = f"Qwen/{model_path}"
+        model_path = f"Qwen/{model_name}"
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
