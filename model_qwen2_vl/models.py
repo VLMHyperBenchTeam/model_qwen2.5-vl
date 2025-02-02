@@ -76,16 +76,46 @@ class Qwen2VLModel(ModelInterface):
 
         return output_text[0]
 
-    # TODO: реализовать метод
     def predict_on_images(self, images: List[Any], question: str) -> str:
-        """Реализация метода для предсказания на основе нескольких изображений.
+        """Реализация метода для работы с несколькими изображениями."""
+        # Формируем сообщение с несколькими изображениями
+        messages = [{
+            "role": "user",
+            "content": [
+                *[{"type": "image", "image": img} for img in images],
+                {"type": "text", "text": question}
+            ]
+        }]
 
-        Args:
-            images (List[Any]): Список изображений, на основе которых делается предсказание.
-                               Тип элементов списка может быть специфичным для реализации.
-            question (str): Промпт-вопрос по изображениям.
+        # Подготовка входных данных
+        text = self.processor.apply_chat_template(
+            messages, 
+            tokenize=False, 
+            add_generation_prompt=True
+        )
+        image_inputs, video_inputs = process_vision_info(messages)
+        
+        # Обработка входных данных
+        inputs = self.processor(
+            text=[text],
+            images=image_inputs,
+            videos=video_inputs,
+            padding=True,
+            return_tensors="pt"
+        ).to("cuda")
 
-        Returns:
-            str: Строка с ответом от модели.
-        """
-        return f"{self.model_name} predict_on_images"
+        # Генерация ответа
+        generated_ids = self.model.generate(**inputs, max_new_tokens=512)
+        generated_ids_trimmed = [
+            out_ids[len(in_ids):] 
+            for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+        ]
+        
+        # Декодирование результата
+        output_text = self.processor.batch_decode(
+            generated_ids_trimmed,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=False
+        )[0]
+
+        return output_text

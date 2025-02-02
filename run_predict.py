@@ -38,8 +38,16 @@ if __name__ == "__main__":
 
     # отвечаем на вопрос о по одной картинке
     model_answer = model.predict_on_image(image=image_path, question=question)
+    print(model_answer)
 
-    # отвечаем на вопрос о по нескольким картинкам сразу (пока не реализован)
-    # model_answer = model.predict_on_images(images=[image_path1, image_path2], question=question)
+    # отвечаем на вопрос о по нескольким картинкам сразу
+    image_path1 = "example_docs/free_loan_1.jpg"
+    image_path2 = "example_docs/free_loan_2.jpg"
+    question = (
+        "Пожалуйста,расскажи что это за документ и из скольки пунктов он состоит?"
+    )
+    model_answer = model.predict_on_images(
+        images=[image_path1, image_path2], question=question
+    )
 
     print(model_answer)
