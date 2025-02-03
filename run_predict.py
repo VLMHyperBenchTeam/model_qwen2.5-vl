@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 from model_interface.model_factory import ModelFactory
 
@@ -12,7 +13,7 @@ if __name__ == "__main__":
     cache_directory = os.path.join(script_dir, cache_directory)
 
     # Имена моделей и семейство моделей
-    model_name_1 = "Qwen2-VL-2B-Instruct"
+    model_name_1 = "Qwen2-VL-7B-Instruct"
     model_family = "Qwen2-VL"
 
     # Инфо о том где взять класс для семейства моделей
@@ -24,9 +25,6 @@ if __name__ == "__main__":
     # Регистрация модели в фабрике
     ModelFactory.register_model(model_family, model_class_path)
 
-    image_path = "example_docs/schet_na_oplatu.png"
-    question = "Пожалуйста собери следующую информацию с документа:покупатель,\r\nИНН покупателя,\r\nКПП покупателя,\r\nтелефон покупателя,\r\nпоставщик,\r\nИНН поставщика,\r\nБИК поставщика,\r\nКор. счет поставщика,\r\nР/с поставщика,\r\nдата документа,\r\nномер счета документа,\r\nПеречисли каждый купленный товар  (наименование, количество, цена за штуку)\r\nкакую сумму нужно заплатить за все товары\r\nв какой валюте платим,\r\nвзнос НДС.\r\nВерни ответ в виде json файла с полями и ответами на них."
-
     # создаем модель
     model_init_params = {
         "model_name": model_name_1,
@@ -37,17 +35,39 @@ if __name__ == "__main__":
     model = ModelFactory.get_model(model_family, model_init_params)
 
     # отвечаем на вопрос о по одной картинке
+    image_path = "example_docs/2.jpg"
+    question = "Опиши документ."
     model_answer = model.predict_on_image(image=image_path, question=question)
     print(model_answer)
 
     # отвечаем на вопрос о по нескольким картинкам сразу
-    image_path1 = "example_docs/free_loan_1.jpg"
-    image_path2 = "example_docs/free_loan_2.jpg"
-    question = (
-        "Пожалуйста,расскажи что это за документ и из скольки пунктов он состоит?"
-    )
+    image_path1 = "example_docs/3.jpg"
+    image_path2 = "example_docs/5.jpg"
+    image_path3 = "example_docs/2.jpg"
+    image_path4 = "example_docs/1.jpg"
+    image_path5 = "example_docs/7.png"
+    image_path6 = "example_docs/6.jpg"
+    
+    images=[image_path1, image_path2, image_path3, image_path4, image_path5, image_path6]
+    
+    question = (f"""Количество поданных страниц документов - {len(images)}.
+                Задача: Определите тип каждого документа на предоставленных изображениях и выведите их в виде последовательности цифр, где каждая цифра соответствует определенному типу документа. Ответ должен содержать только порядок цифр, без дополнительного текста.
+                Типы документов:
+                1 - old_tins: свидетельство о постановке на учет физического лица (документ желтого цвета).
+                2 - new_tins: свидетельство о постановке на учет физического лица
+                3 - interest_free_loan_agreement: договор беспроцентном займа
+                4 - snils: страховое свидетельство обязательного пенсионного страхования (документ зеленого цвета).
+                5 - invoice: счет фактура
+                6 - passport: паспорт России
+                Пример ответа: 2,4,5,1,3
+                Пожалуйста, предоставьте ответ в указанном формате.""")
+    
+    print(question)
+    
     model_answer = model.predict_on_images(
-        images=[image_path1, image_path2], question=question
+        images=images, question=question
     )
+    
+    subprocess.run(["nvidia-smi"])
 
     print(model_answer)
