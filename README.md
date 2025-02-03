@@ -1,21 +1,21 @@
 # Описание модели для Benchmark
 
- семейства VLLM-моделей `Qwen2-VL`.
+ семейства VLLM-моделей `Qwen2.5-VL`.
 
 Материалы о семействе VLLM-моделей:
-* [ссылка на GitHub](https://github.com/QwenLM/Qwen2-VL) 
+* [ссылка на GitHub](https://github.com/QwenLM/Qwen2.5-VL) 
 * [ссылка на блог](https://qwenlm.github.io/blog/qwen2-vl/)
 * [ссылка на научную статью](https://arxiv.org/pdf/2409.12191)
 
 Я исследовал возможности небольших моделей, которые умещаются на 1 GPU и имеют лицензию Apache-2.0:
-* Qwen2-VL-7B-Instruct ([ссылка на HuggingFace](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct))
-* Qwen2-VL-2B-Instruct ([ссылка на HuggingFace](https://huggingface.co/Qwen/Qwen2-VL-2B-Instruct))
+* Qwen2-VL-7B-Instruct ([ссылка на HuggingFace](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct))
+* Qwen2-VL-2B-Instruct ([ссылка на HuggingFace](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct))
 
 # Docker контейнер модели
 
 Поддерживаются модели:
 
-P.S. Укажите одно из следующих названий при инициализации класса Qwen2VL_model(model_name="Qwen2-VL-2B-Instruct")
+P.S. Укажите одно из следующих названий при инициализации класса Qwen2VLModel(model_name="Qwen2.5-VL-2B-Instruct")
 
 2B-варианты:
 * Qwen2-VL-2B-Instruct
@@ -28,7 +28,7 @@ P.S. Укажите одно из следующих названий при и�
 
 Для сборки `Docker image` выполним команду:
 ```
-docker build -t ghcr.io/vlmhyperbenchteam/qwen2-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0 -f docker/Dockerfile-cu124 .
+docker build -t qwen2.5-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0 -f docker/Dockerfile-cu124 .
 ```
 
 ## Run Docker Container
@@ -39,7 +39,7 @@ docker run \
     --gpus all \
     -it \
     -v .:/workspace \
-    ghcr.io/vlmhyperbenchteam/qwen2-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0
+    ghcr.io/vlmhyperbenchteam/qwen2.5-vl:ubuntu22.04-cu124-torch2.4.0_v0.1.0 sh
 ```
 
 Нам откроется терминал внутри `Docker Container`.

@@ -3,13 +3,13 @@ from typing import Any, List
 import torch
 from model_interface.model_interface import ModelInterface
 from qwen_vl_utils import process_vision_info
-from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
+from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
 
 
-class Qwen2VLModel(ModelInterface):
+class Qwen2_5_VLModel(ModelInterface):
     def __init__(
         self,
-        model_name="Qwen2-VL-2B-Instruct",
+        model_name="Qwen2.5-VL-3B-Instruct",
         system_prompt="",
         cache_dir="model_cache",
     ):
@@ -22,7 +22,7 @@ class Qwen2VLModel(ModelInterface):
 
         # default: Load the model on the available device(s)
         model_path = f"Qwen/{model_name}"
-        self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+        self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
             device_map="auto",
