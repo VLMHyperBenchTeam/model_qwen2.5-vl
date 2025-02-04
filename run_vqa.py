@@ -35,7 +35,7 @@ if __name__ == "__main__":
     model = ModelFactory.get_model(model_family, model_init_params)
 
     # отвечаем на вопрос о по одной картинке
-    image_path = "example_docs/6.jpg"
+    image_path = "example_docs/classification/6.jpg"
     question = "Опиши документ. Отдай ответ в виде json ключ:значение"
     model_answer = model.predict_on_image(image=image_path, question=question)
     print(model_answer)
