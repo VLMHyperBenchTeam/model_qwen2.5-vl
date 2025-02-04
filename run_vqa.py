@@ -13,7 +13,7 @@ if __name__ == "__main__":
     cache_directory = os.path.join(script_dir, cache_directory)
 
     # Имена моделей и семейство моделей
-    model_name_1 = "Qwen2.5-VL-3B-Instruct"
+    model_name_1 = "Qwen2.5-VL-7B-Instruct"
     model_family = "Qwen2.5-VL"
 
     # Инфо о том где взять класс для семейства моделей
@@ -35,8 +35,8 @@ if __name__ == "__main__":
     model = ModelFactory.get_model(model_family, model_init_params)
 
     # отвечаем на вопрос о по одной картинке
-    image_path = "example_docs/1.jpg"
-    question = "Опиши документ."
+    image_path = "example_docs/6.jpg"
+    question = "Опиши документ. Отдай ответ в виде json ключ:значение"
     model_answer = model.predict_on_image(image=image_path, question=question)
     print(model_answer)
     
