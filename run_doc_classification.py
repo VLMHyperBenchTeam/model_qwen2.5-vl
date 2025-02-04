@@ -13,13 +13,13 @@ if __name__ == "__main__":
     cache_directory = os.path.join(script_dir, cache_directory)
 
     # Имена моделей и семейство моделей
-    model_name_1 = "Qwen2.5-VL-3B-Instruct"
-    model_family = "Qwen2-VL"
+    model_name_1 = "Qwen2.5-VL-7B-Instruct"
+    model_family = "Qwen2.5-VL"
 
     # Инфо о том где взять класс для семейства моделей
-    package = "model_qwen2_vl"
+    package = "model_qwen2_5_vl"
     module = "models"
-    model_class = "Qwen2VLModel"
+    model_class = "Qwen2_5_VLModel"
     model_class_path = f"{package}.{module}:{model_class}"
 
     # Регистрация модели в фабрике
@@ -35,12 +35,12 @@ if __name__ == "__main__":
     model = ModelFactory.get_model(model_family, model_init_params)
 
     # отвечаем на вопрос о по нескольким картинкам сразу
-    image_path1 = "example_docs/3.jpg"
-    image_path2 = "example_docs/5.jpg"
-    image_path3 = "example_docs/2.jpg"
-    image_path4 = "example_docs/1.jpg"
-    image_path5 = "example_docs/7.png"
-    image_path6 = "example_docs/6.jpg"
+    image_path1 = "example_docs/classification/3.jpg"
+    image_path2 = "example_docs/classification/5.jpg"
+    image_path3 = "example_docs/classification/2.jpg"
+    image_path4 = "example_docs/classification/1.jpg"
+    image_path5 = "example_docs/classification/7.png"
+    image_path6 = "example_docs/classification/6.jpg"
     
     images=[image_path1, image_path2, image_path3, image_path4, image_path5, image_path6]
     

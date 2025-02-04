@@ -34,11 +34,22 @@ if __name__ == "__main__":
 
     model = ModelFactory.get_model(model_family, model_init_params)
 
-    # отвечаем на вопрос о по одной картинке
-    image_path = "example_docs/classification/6.jpg"
-    question = "Опиши документ. Отдай ответ в виде json ключ:значение"
-    model_answer = model.predict_on_image(image=image_path, question=question)
-    print(model_answer)
+    # отвечаем на вопрос о по нескольким картинкам сразу
+    image_path1 = "example_docs/multipage_interest_free_loan_agreement/0/0.jpg"
+    image_path2 = "example_docs/multipage_interest_free_loan_agreement/0/1.jpg"
+    image_path3 = "example_docs/multipage_interest_free_loan_agreement/0/2.jpg"
+    image_path4 = "example_docs/multipage_interest_free_loan_agreement/0/3.jpg"
+    
+    images=[image_path1, image_path2, image_path3, image_path4]
+    
+    question = (f"""Количество поданных страниц документов - {len(images)}.
+Задача: Напиши, пожалуйста, кто и кому сколько денег занимает?""")
+    
+    print(question)
+    
+    model_answer = model.predict_on_images(
+        images=images, question=question
+    )
     
     subprocess.run(["nvidia-smi"])
 

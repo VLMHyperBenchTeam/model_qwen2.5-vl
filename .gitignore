@@ -128,3 +128,6 @@ cython_debug/
 
 # Hugging Face model cache
 model_cache/*
+
+# Ignore example of docs
+example_docs/*
