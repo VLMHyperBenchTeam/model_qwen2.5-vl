@@ -35,42 +35,32 @@ if __name__ == "__main__":
     model = ModelFactory.get_model(model_family, model_init_params)
 
     # отвечаем на вопрос о по одной картинке
-    image_path = "example_docs/old_version_tins/2.jpg"
+    image_path = "example_docs/snils/8.jpg"
     question = """
-Подано изображение свидетельства о постановке на учет физического лица в налоговом органе.
+Подано изображение паспорта Российской Федерации.
 Пожалуйста, извлеките информацию и представьте её в виде структурированного JSON-объекта с указанными полями.
 
 Поля для извлечения:
-- "type": "Свидетельство о постановке на учет физического лица в налоговом органе"
-- "issued_by": "Федеральная налоговая служба"
-- "date_of_issue": Дата выдачи (в формате DD.MM.YYYY)
+- "country": Страна (например, "Российская Федерация")
+- "type": "СТРАХОВОЕ СВИДЕТЕЛЬСТВО ОБЯЗАТЕЛЬНОГО ПЕНСИОННОГО СТРАХОВАНИЯ",
+- "snils_number": "номер документа (в формате XXX-XXX-XXX XX)"
 - "fio": Полное имя владельца (Фамилия Имя Отчество)
-- "gender": Пол ("Муж." или "Жен.")
 - "date_of_birth": Дата рождения (в формате DD.MM.YYYY)
-- "registration_date": "дата регистрации" (в формате DD.MM.YYYY)
-- "inn_number": "ИНН"
-- "signature": "подпись",
-- "office": "должность подписавшего лица",
-- "form_number": "номер формы",
-- "code": "код"
+- "place_of_birth": Место рождения
+- "gender": Пол ("Муж." или "Жен.")
+- "registration_date": Дата регистрации (в формате DD.MM.YYYY)
 
 JSON-структура:
 {
+  "country": "",
   "type": "",
-  "issued_by": "",
-  "date_of_issue": "",
+  "snils_number": "",
   "fio": "",
-  "gender": "",
   "date_of_birth": "",
-  "registration_date": "",
-  "inn_number": "",
-  "signature": "",
-  "office": "",
-  "form_number": "",
-  "code": ""
+  "place_of_birth": "",
+  "gender": "",
+  "registration_date": ""
 }
-
-Используйте данные из изображения для заполнения полей JSON.
 """
     model_answer = model.predict_on_image(image=image_path, question=question)
     print(model_answer)
