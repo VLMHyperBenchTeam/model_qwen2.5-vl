@@ -30,6 +30,7 @@ if __name__ == "__main__":
         "model_name": model_name_1,
         "system_prompt": "",
         "cache_dir": "model_cache",
+        "device_map": "cuda:0",
     }
 
     model = ModelFactory.get_model(model_family, model_init_params)

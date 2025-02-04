@@ -12,6 +12,7 @@ class Qwen2_5_VLModel(ModelInterface):
         model_name="Qwen2.5-VL-3B-Instruct",
         system_prompt="",
         cache_dir="model_cache",
+        device_map=None
     ):
         self.model_name = model_name
         self.system_prompt = system_prompt
@@ -19,13 +20,16 @@ class Qwen2_5_VLModel(ModelInterface):
 
         self.min_pixels = 256 * 28 * 28
         self.max_pixels = 1536 * 28 * 28  # 1280 * 28 * 28
+        
+        if device_map is None:
+            device_map="auto"
 
         # default: Load the model on the available device(s)
         model_path = f"Qwen/{model_name}"
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
-            device_map="auto",
+            device_map=device_map,
             attn_implementation="flash_attention_2",
             cache_dir=self.cache_dir,
         )
