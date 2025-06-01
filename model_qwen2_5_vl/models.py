@@ -17,6 +17,7 @@ class Qwen2_5_VLModel(ModelInterface):
         self.model_name = model_name
         self.system_prompt = system_prompt
         self.cache_dir = cache_dir
+        self.framework = "Hugging_Face"
 
         self.min_pixels = 256 * 28 * 28
         self.max_pixels = 1536 * 28 * 28  # 1280 * 28 * 28
