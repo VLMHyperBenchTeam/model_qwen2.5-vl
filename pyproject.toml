@@ -1,15 +1,9 @@
-[tool.poetry]
-name = "model-qwen2_5-vl"
+[project]
+name = "model-qwen2-5-vl"
 version = "0.1.0"
-description = ""
-authors = ["Anton Shiryaev <med.phisiker@gmail.com>"]
+description = "Add your description here"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.10"
-model-interface = {git = "https://github.com/VLMHyperBenchTeam/model_interface.git", rev = "0.1.0"}
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires-python = ">=3.10"
+dependencies = [
+    "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2.dev0"
+]
