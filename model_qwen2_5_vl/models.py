@@ -136,3 +136,8 @@ class Qwen2_5_VLModel(ModelInterface):
         )[0]
 
         return output_text
+
+
+# Автоматическая регистрация модели в ModelFactory при импорте
+from model_interface.model_factory import ModelFactory
+ModelFactory.register_model("Qwen2.5-VL", "model_qwen2_5_vl.models:Qwen2_5_VLModel")
