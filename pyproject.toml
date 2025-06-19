@@ -1,11 +1,15 @@
 [project]
 name = "model-qwen2-5-vl"
-version = "0.1.2.dev2"
+version = "0.1.2.dev1"
 description = "Qwen2.5-VL model implementation for VLM HyperBench"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git"
+    "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2.dev1"
+]
+authors = [
+   {name = "VLMHyperBenchTeam", email = "contact@vlmhyperbench.team"},
+   {name = "Anton Shiryaev", email = "med.phisiker@gmail.com"}
 ]
 
 [build-system]
