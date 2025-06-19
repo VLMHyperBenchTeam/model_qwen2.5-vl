@@ -7,3 +7,7 @@ requires-python = ">=3.10"
 dependencies = [
     "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2.dev0"
 ]
+
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
