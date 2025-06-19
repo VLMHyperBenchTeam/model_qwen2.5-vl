@@ -9,7 +9,7 @@ source = { git = "https://github.com/VLMHyperBenchTeam/model_interface.git?rev=0
 
 [[package]]
 name = "model-qwen2-5-vl"
-version = "0.1.2.dev0"
+version = "0.1.2.dev1"
 source = { editable = "." }
 dependencies = [
     { name = "model-interface" },

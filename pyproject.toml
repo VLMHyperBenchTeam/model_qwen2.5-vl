@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2.dev1"
+    "model_interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2.dev1"
 ]
 
 [build-system]
