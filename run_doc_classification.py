@@ -18,7 +18,7 @@ if __name__ == "__main__":
     
     images=[image_path1, image_path2, image_path3, image_path4, image_path5, image_path6]
     
-    question = (f"""Количество поданных страниц документов - {len(images)}.
+    prompt = (f"""Количество поданных страниц документов - {len(images)}.
                 Задача: Определите тип каждого документа на предоставленных изображениях и выведите их в виде последовательности цифр, где каждая цифра соответствует определенному типу документа. Ответ должен содержать только порядок цифр, без дополнительного текста.
                 Типы документов:
                 1 - old_tins: свидетельство о постановке на учет физического лица (документ желтого цвета).
@@ -30,10 +30,10 @@ if __name__ == "__main__":
                 Пример ответа: 2,4,5,1,3
                 Пожалуйста, предоставьте ответ в указанном формате.""")
     
-    print(question)
+    print(prompt)
     
     model_answer = model.predict_on_images(
-        images=images, question=question
+        images=images, prompt=prompt
     )
     
     subprocess.run(["nvidia-smi"])

@@ -14,12 +14,12 @@ if __name__ == "__main__":
     
     images=[image_path1, image_path2]
     
-    question = f"Количество поданных страниц документов - {len(images)}. Ответьте на вопрос: Кто подписал документ?"
+    prompt = f"Количество поданных страниц документов - {len(images)}. Ответьте на вопрос: Кто подписал документ?"
     
-    print(question)
+    print(prompt)
     
     model_answer = model.predict_on_images(
-        images=images, question=question
+        images=images, prompt=prompt
     )
     
     subprocess.run(["nvidia-smi"])

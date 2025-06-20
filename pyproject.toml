@@ -1,6 +1,6 @@
 [project]
 name = "model-qwen2-5-vl"
-version = "0.1.2.dev2"
+version = "0.1.2.dev3"
 description = "Qwen2.5-VL model implementation for VLM HyperBench"
 readme = "README.md"
 requires-python = ">=3.10"

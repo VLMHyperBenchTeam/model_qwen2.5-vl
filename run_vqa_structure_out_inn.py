@@ -38,7 +38,7 @@ JSON-структура:
   "issue_place": ""
 }
 """
-    model_answer = model.predict_on_image(image=image_path, question=question)
+    model_answer = model.predict_on_image(image=image_path, prompt=question)
     print(model_answer)
     
     subprocess.run(["nvidia-smi"])
