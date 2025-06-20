@@ -25,13 +25,22 @@ class Qwen2_5_VLModel(ModelInterface):
         if device_map is None:
             device_map="auto"
 
+        # Проверяем доступность flash_attn
+        try:
+            import flash_attn
+            attn_implementation = "flash_attention_2"
+            print("INFO: Используется FlashAttention2 для оптимизации производительности")
+        except ImportError:
+            attn_implementation = "eager"
+            print("WARNING: flash_attn не установлен, используется стандартная реализация внимания")
+
         # default: Load the model on the available device(s)
         model_path = f"Qwen/{model_name}"
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
             device_map=device_map,
-            attn_implementation="flash_attention_2",
+            attn_implementation=attn_implementation,
             cache_dir=self.cache_dir,
         )
 
