@@ -1,4 +1,8 @@
 [project]
+name = "model-qwen2-5-vl"
+version = "0.1.2.dev3"
+description = "Qwen2.5-VL model implementation for VLM HyperBench"
+[project]
 name = "model-qwen2_5-vl"
 version = "0.1.2.dev4"
 description = "Qwen 2.5-VL model wrapper and evaluation scripts"
