@@ -1,8 +1,6 @@
-import os
 import subprocess
 
 from model_interface.model_factory import ModelFactory
-
 
 if __name__ == "__main__":
     # Инициализируем модель одной строкой

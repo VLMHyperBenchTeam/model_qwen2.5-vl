@@ -23,7 +23,6 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-# одноимённый пакет в src
 packages = ["model_qwen2_5_vl"]
 
 # В dev-режиме, внутри uv workspace, берём локальный пакет

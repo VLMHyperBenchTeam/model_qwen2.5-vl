@@ -52,12 +52,13 @@ class Qwen2_5_VLModel(ModelInterface):
         if device_map is None:
             device_map="auto"
 
-        # Проверяем доступность flash_attn
-        try:
-            import flash_attn
+        # Проверяем доступность flash_attn без импорта модуля (избегаем F401)
+        import importlib.util  # локальный импорт, чтобы не тянуть в глобалы
+
+        if importlib.util.find_spec("flash_attn") is not None:
             attn_implementation = "flash_attention_2"
             print("INFO: Используется FlashAttention2 для оптимизации производительности")
-        except ImportError:
+        else:
             attn_implementation = "eager"
             print("WARNING: flash_attn не установлен, используется стандартная реализация внимания")
 
@@ -133,7 +134,7 @@ class Qwen2_5_VLModel(ModelInterface):
         generated_ids = self.model.generate(**inputs, max_new_tokens=512)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :]
-            for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+            for in_ids, out_ids in zip(inputs.input_ids, generated_ids, strict=False)
         ]
         return self.processor.batch_decode(
             generated_ids_trimmed,
@@ -201,4 +202,5 @@ class Qwen2_5_VLModel(ModelInterface):
 
 # Автоматическая регистрация модели в ModelFactory при импорте
 from model_interface.model_factory import ModelFactory
+
 ModelFactory.register_model("Qwen2.5-VL", "model_qwen2_5_vl.models:Qwen2_5_VLModel")
