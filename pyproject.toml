@@ -1,6 +1,6 @@
 [project]
 name = "model-qwen2_5-vl"
-version = "0.1.2.dev4"
+version = "0.1.2"
 description = "Qwen 2.5-VL model wrapper and evaluation scripts"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,7 +27,6 @@ packages = ["model_qwen2_5_vl"]
 
 # В dev-режиме, внутри uv workspace, берём локальный пакет
 [tool.uv.sources]
-model-interface = { workspace = true }
 
 [tool.hatch.metadata]
 allow-direct-references = true
