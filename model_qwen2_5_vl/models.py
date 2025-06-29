@@ -67,15 +67,20 @@ class Qwen2_5_VLModel(ModelInterface):
         
         self.framework = "Hugging_Face"
         
-        # Проверяем доступность flash_attn без импорта модуля (избегаем F401)
-        import importlib.util  # локальный импорт, чтобы не тянуть в глобалы
-
-        if importlib.util.find_spec("flash_attn") is not None:
-            attn_implementation = "flash_attention_2"
-            print("INFO: Используется FlashAttention2 для оптимизации производительности")
+        # Проверяем, указан ли attn_implementation в specific_params
+        if "attn_implementation" in self.specific_params:
+            attn_implementation = self.specific_params["attn_implementation"]
+            print(f"INFO: Используется принудительно заданная реализация внимания: {attn_implementation}")
         else:
-            attn_implementation = "eager"
-            print("WARNING: flash_attn не установлен, используется стандартная реализация внимания")
+            # Проверяем доступность flash_attn без импорта модуля (избегаем F401)
+            import importlib.util  # локальный импорт, чтобы не тянуть в глобалы
+
+            if importlib.util.find_spec("flash_attn") is not None:
+                attn_implementation = "flash_attention_2"
+                print("INFO: Используется FlashAttention2 для оптимизации производительности")
+            else:
+                attn_implementation = "eager"
+                print("WARNING: flash_attn не установлен, используется стандартная реализация внимания")
 
         # default: Load the model on the available device(s)
         model_path = f"Qwen/{self.common_params['model_name']}"
