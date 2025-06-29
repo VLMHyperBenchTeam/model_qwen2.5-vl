@@ -2,6 +2,26 @@
 
  семейства VLLM-моделей `Qwen2.5-VL`.
 
+## 🚀 Quick start
+
+```python
+from model_qwen2_5_vl import initialize_qwen_model
+
+model = initialize_qwen_model(
+    device_map="cuda:0",  # либо "auto" для автоматического распределения
+    specific_params={
+        "max_size": 2048 * 28 * 28,  # допустимый максимум размера картинки
+    },
+)
+
+answer = model.predict_on_image("doc_scan.jpg", "Опиши документ")
+print(answer)
+```
+
+Под капотом `initialize_qwen_model` формирует вложенную конфигурацию и вызывает
+`model_interface.ModelFactory.initialize_model`, поэтому вы можете и сами
+собрать конфиг при необходимости.
+
 Материалы о семействе VLLM-моделей:
 * [ссылка на GitHub](https://github.com/QwenLM/Qwen2.5-VL) 
 * [ссылка на блог](https://qwenlm.github.io/blog/qwen2.5-vl)

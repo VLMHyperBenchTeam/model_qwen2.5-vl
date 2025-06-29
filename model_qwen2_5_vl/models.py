@@ -8,7 +8,7 @@ Google-style docstrings на русском языке используются 
 документации API.
 """
 
-from typing import Any, List
+from typing import Any, List, Optional
 
 import torch
 from model_interface.model_interface import ModelInterface
@@ -29,7 +29,9 @@ class Qwen2_5_VLModel(ModelInterface):
         model_name: str = "Qwen2.5-VL-3B-Instruct",
         system_prompt: str = "",
         cache_dir: str = "model_cache",
-        device_map: Any = None,
+        device_map: Optional[Any] = None,
+        min_pixels: Optional[int] = None,
+        max_pixels: Optional[int] = None,
     ) -> None:
         """Инициализирует модель.
 
@@ -40,14 +42,18 @@ class Qwen2_5_VLModel(ModelInterface):
             device_map (Any): Карта устройств (например, ``"cuda:0"`` или
                 ``"auto"``). Если ``None``, значение ``"auto"`` будет выбрано
                 автоматически.
+            min_pixels (int): Минимальное количество пикселей в изображении.
+            max_pixels (int): Максимальное количество пикселей в изображении.
         """
         self.model_name = model_name
         self.system_prompt = system_prompt
         self.cache_dir = cache_dir
         self.framework = "Hugging_Face"
 
-        self.min_pixels = 256 * 28 * 28
-        self.max_pixels = 1536 * 28 * 28  # 1280 * 28 * 28
+        # Допустим разработчик хочет изменить ограничения на размер изображения.
+        # Позволяем переопределить значения через параметры конструктора.
+        self.min_pixels = min_pixels if min_pixels is not None else 256 * 28 * 28
+        self.max_pixels = max_pixels if max_pixels is not None else 1536 * 28 * 28  # 1280 * 28 * 28
         
         if device_map is None:
             device_map="auto"
@@ -132,9 +138,13 @@ class Qwen2_5_VLModel(ModelInterface):
         ).to("cuda")
 
         generated_ids = self.model.generate(**inputs, max_new_tokens=512)
+        # Приводим к list для избежания ошибок статического анализа ("Never is not iterable")
+        in_ids_list = list(inputs.input_ids)  # type: ignore[arg-type]
+        gen_ids_list = list(generated_ids)  # type: ignore[arg-type]
+
         generated_ids_trimmed = [
             out_ids[len(in_ids) :]
-            for in_ids, out_ids in zip(inputs.input_ids, generated_ids, strict=False)
+            for in_ids, out_ids in zip(in_ids_list, gen_ids_list, strict=False)
         ]
         return self.processor.batch_decode(
             generated_ids_trimmed,

@@ -1,10 +1,12 @@
 import subprocess
+from typing import Any  # local import to avoid global dependency
 
-from model_interface.model_factory import ModelFactory
+# Используем вспомогательную функцию пакета модели
+from model_qwen2_5_vl import initialize_qwen_model
 
 if __name__ == "__main__":
     # Инициализируем модель одной строкой
-    model = ModelFactory.initialize_qwen_model(model_name="Qwen2.5-VL-7B-Instruct")
+    model: Any = initialize_qwen_model(model_name="Qwen2.5-VL-7B-Instruct")
 
     # отвечаем на вопрос о по нескольким картинкам сразу
     image_path1 = "example_docs/sorting/1.jpg"
