@@ -9,6 +9,9 @@ requires-python = ">=3.10"
 dependencies = [
     # В прод-режиме ставим конкретный tag (SemVer) из GitHub
     "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2",
+    "qwen-vl-utils>=0.0.11",
+    "torch>=2.4,<2.8",
+    "transformers>=4.53.0",
 ]
 authors = [
     {name = "Anton Shiryaev", email = "med.phisiker@gmail.com"}
