@@ -8,7 +8,7 @@ Google-style docstrings на русском языке используются 
 документации API.
 """
 
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Dict
 
 import torch
 from model_interface.model_interface import ModelInterface
@@ -26,38 +26,47 @@ class Qwen2_5_VLModel(ModelInterface):
 
     def __init__(
         self,
-        model_name: str = "Qwen2.5-VL-3B-Instruct",
-        system_prompt: str = "",
-        cache_dir: str = "model_cache",
-        device_map: Optional[Any] = None,
-        min_pixels: Optional[int] = None,
-        max_pixels: Optional[int] = None,
+        model_config: Dict[str, Any]
     ) -> None:
         """Инициализирует модель.
 
         Args:
-            model_name (str): Полное имя модели в репозитории HuggingFace.
-            system_prompt (str): Системный промпт, добавляемый ко всем запросам.
-            cache_dir (str): Директория для кэширования весов/токенизатора.
-            device_map (Any): Карта устройств (например, ``"cuda:0"`` или
-                ``"auto"``). Если ``None``, значение ``"auto"`` будет выбрано
-                автоматически.
-            min_pixels (int): Минимальное количество пикселей в изображении.
-            max_pixels (int): Максимальное количество пикселей в изображении.
+            model_config (Dict[str, Any]): Конфигурация модели в формате:
+                {
+                    "common_params": {
+                        "model_name": "Qwen2.5-VL-7B-Instruct",
+                        "system_prompt": "",
+                        "cache_dir": "model_cache",
+                        "device_map": "auto"
+                    },
+                    "specific_params": {
+                        "min_pixels": 256 * 28 * 28,
+                        "max_pixels": 1280 * 28 * 28
+                    }
+                }
         """
-        self.model_name = model_name
-        self.system_prompt = system_prompt
-        self.cache_dir = cache_dir
-        self.framework = "Hugging_Face"
-
-        # Допустим разработчик хочет изменить ограничения на размер изображения.
-        # Позволяем переопределить значения через параметры конструктора.
-        self.min_pixels = min_pixels if min_pixels is not None else 256 * 28 * 28
-        self.max_pixels = max_pixels if max_pixels is not None else 1536 * 28 * 28  # 1280 * 28 * 28
+        # Инициализируем параметры с значениями по умолчанию
+        default_common_params = {
+            "model_name": "Qwen2.5-VL-3B-Instruct",
+            "system_prompt": "",
+            "cache_dir": "model_cache",
+            "device_map": "auto"
+        }
         
-        if device_map is None:
-            device_map="auto"
-
+        default_specific_params = {
+            "min_pixels": 256 * 28 * 28,    # 200,704 - согласно документации
+            "max_pixels": 1280 * 28 * 28    # 1,003,520 - согласно документации  
+        }
+        
+        # Применяем конфигурацию поверх значений по умолчанию
+        self.common_params = default_common_params.copy()
+        self.common_params.update(model_config.get("common_params", {}))
+        
+        self.specific_params = default_specific_params.copy()
+        self.specific_params.update(model_config.get("specific_params", {}))
+        
+        self.framework = "Hugging_Face"
+        
         # Проверяем доступность flash_attn без импорта модуля (избегаем F401)
         import importlib.util  # локальный импорт, чтобы не тянуть в глобалы
 
@@ -69,17 +78,17 @@ class Qwen2_5_VLModel(ModelInterface):
             print("WARNING: flash_attn не установлен, используется стандартная реализация внимания")
 
         # default: Load the model on the available device(s)
-        model_path = f"Qwen/{model_name}"
+        model_path = f"Qwen/{self.common_params['model_name']}"
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
-            device_map=device_map,
+            device_map=self.common_params["device_map"],
             attn_implementation=attn_implementation,
-            cache_dir=self.cache_dir,
+            cache_dir=self.common_params["cache_dir"],
         )
 
         # default processor
-        self.processor = AutoProcessor.from_pretrained(model_path, cache_dir=cache_dir)
+        self.processor = AutoProcessor.from_pretrained(model_path, cache_dir=self.common_params["cache_dir"])
 
     def get_message(self, image: Any, prompt: str) -> dict:
         """Формирует сообщение в формате Qwen-VL.
@@ -98,8 +107,8 @@ class Qwen2_5_VLModel(ModelInterface):
                 {
                     "type": "image",
                     "image": image,
-                    "min_pixels": self.min_pixels,
-                    "max_pixels": self.max_pixels,
+                    "min_pixels": self.specific_params["min_pixels"],
+                    "max_pixels": self.specific_params["max_pixels"],
                 },
                 {"type": "text", "text": prompt},
             ],
@@ -128,7 +137,7 @@ class Qwen2_5_VLModel(ModelInterface):
         if isinstance(vision_info, tuple) and len(vision_info) == 3:  # type: ignore[arg-type]
             image_inputs, video_inputs, _ = vision_info  # compat с более старыми версиями, где возвращается 3 значения
         else:
-            image_inputs, video_inputs = vision_info
+            image_inputs, video_inputs = vision_info  # type: ignore[assignment]
         inputs = self.processor(
             text=[text],
             images=image_inputs,
@@ -170,8 +179,8 @@ class Qwen2_5_VLModel(ModelInterface):
                         {
                             "type": "image",
                             "image": img,
-                            "min_pixels": self.min_pixels,
-                            "max_pixels": self.max_pixels,
+                            "min_pixels": self.specific_params["min_pixels"],
+                            "max_pixels": self.specific_params["max_pixels"],
                         }
                         for img in images
                     ],
