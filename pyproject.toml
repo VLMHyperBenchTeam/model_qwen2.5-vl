@@ -7,8 +7,8 @@ requires-python = ">=3.10"
 # git-зависимость фиксируем через PEP 440 direct URL
 # см. https://peps.python.org/pep-0440/#direct-references
 dependencies = [
-    # В прод-режиме ставим конкретный tag (SemVer) из GitHub
-    "model-interface @ git+https://github.com/VLMHyperBenchTeam/model_interface.git@0.1.2",
+    # Используем локально установленную версию model-interface
+    "model-interface",
     "qwen-vl-utils>=0.0.11",
     "torch>=2.4,<2.8",
     "transformers>=4.53.0",
