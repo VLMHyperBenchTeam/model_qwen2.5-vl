@@ -47,7 +47,7 @@ class Qwen2_5_VLModel(ModelInterface):
         """
         # Инициализируем параметры с значениями по умолчанию
         default_common_params = {
-            "model_name": "Qwen2.5-VL-3B-Instruct",
+            "model_name": "Qwen2.5-VL-7B-Instruct",
             "system_prompt": "",
             "cache_dir": "model_cache",
             "device_map": "auto"
@@ -149,7 +149,7 @@ class Qwen2_5_VLModel(ModelInterface):
             videos=video_inputs,
             padding=True,
             return_tensors="pt",
-        ).to("cuda")
+        ).to(self.model.device)
 
         generated_ids = self.model.generate(**inputs, max_new_tokens=512)
         # Приводим к list для избежания ошибок статического анализа ("Never is not iterable")
@@ -224,7 +224,24 @@ class Qwen2_5_VLModel(ModelInterface):
         return self._generate_answer(self.get_messages(images, prompt))
 
 
-# Автоматическая регистрация модели в ModelFactory при импорте
-from model_interface.model_factory import ModelFactory
+# Флаг для предотвращения повторной регистрации
+_models_registered = False
 
-ModelFactory.register_model("Qwen2.5-VL", "model_qwen2_5_vl.models:Qwen2_5_VLModel")
+def register_models() -> None:
+    """Регистрирует модели семейства Qwen2.5-VL в ModelFactory.
+    
+    Эта функция должна быть вызвана явно для регистрации модели.
+    Такой подход предотвращает случайное удаление импорта статическими анализаторами.
+    Функция идемпотентна - повторные вызовы не будут дублировать регистрацию.
+    """
+    global _models_registered
+    
+    if _models_registered:
+        return
+    
+    from model_interface.model_factory import ModelFactory
+    
+    ModelFactory.register_model("Qwen2.5-VL", "model_qwen2_5_vl.models:Qwen2_5_VLModel")
+    # ModelFactory уже логирует успешную регистрацию, дублировать не нужно
+    
+    _models_registered = True
