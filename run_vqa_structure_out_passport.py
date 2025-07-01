@@ -44,5 +44,3 @@ JSON-структура:
     print(model_answer)
     
     subprocess.run(["nvidia-smi"])
-
-    print(model_answer)
