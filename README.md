@@ -10,7 +10,7 @@ from model_qwen2_5_vl import initialize_qwen_model
 model = initialize_qwen_model(
     device_map="cuda:0",  # либо "auto" для автоматического распределения
     specific_params={
-        "max_size": 2048 * 28 * 28,  # допустимый максимум размера картинки
+        "max_pixels": 2048 * 28 * 28,  # допустимый максимум размера картинки
     },
 )
 
