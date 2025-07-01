@@ -32,7 +32,7 @@ def create_qwen_model_config(
     model_name: str = DEFAULT_QWEN_MODEL,
     cache_dir: str = "model_cache",
     device_map: str = "auto",
-    system_prompt: str | None = "",
+    system_prompt: str = "",
     specific_params: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Сформировать вложенный конфиг для ModelFactory.
@@ -51,15 +51,12 @@ def create_qwen_model_config(
         Любые дополнительные поля, специфичные для семейства Qwen.
     """
 
-    # Импортируем модуль, чтобы выполнить side-effect регистрации модели
-    # в ModelFactory (см. models.py).
-    import importlib
-
-    importlib.import_module("model_qwen2_5_vl.models")
+    # Примечание: модель должна быть зарегистрирована вызовом register_models()
+    # перед использованием этой функции
 
     return {
+        "model_family": "Qwen2.5-VL",
         "common_params": {
-            "model_family": "Qwen2.5-VL",
             "model_name": model_name,
             "cache_dir": cache_dir,
             "device_map": device_map,
@@ -80,8 +77,11 @@ def initialize_qwen_model(
 
     Возвращает готовый объект, реализующий ``ModelInterface``.
     """
-
+    
     from model_interface.model_factory import ModelFactory
+    
+    # Регистрируем модели перед использованием
+    register_models()
 
     config = create_qwen_model_config(
         model_name=model_name,
@@ -100,4 +100,14 @@ __all__ = [
     "DEFAULT_QWEN_MODEL",
     "create_qwen_model_config",
     "initialize_qwen_model",
+    "register_models",
 ]
+
+
+def register_models() -> None:
+    """Регистрирует модели семейства Qwen2.5-VL в ModelFactory.
+    
+    Эта функция может быть вызвана напрямую для явной регистрации модели.
+    """
+    from model_qwen2_5_vl.models import register_models as _register_models
+    _register_models()
