@@ -1,5 +1,6 @@
 import subprocess
 from typing import Any
+
 from model_qwen2_5_vl import initialize_qwen_model
 
 if __name__ == "__main__":
@@ -15,7 +16,7 @@ if __name__ == "__main__":
     question = "Опиши документ."
     model_answer = model.predict_on_image(image=image_path, prompt=question)
     print(model_answer)
-    
+
     subprocess.run(["nvidia-smi"])
 
     print(model_answer)
