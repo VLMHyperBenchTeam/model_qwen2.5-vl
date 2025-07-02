@@ -8,11 +8,11 @@ Google-style docstrings на русском языке используются 
 документации API.
 """
 
-from typing import Any, List, Optional, Dict
+from typing import Any
 
-import torch
 from model_interface.model_interface import ModelInterface
 from qwen_vl_utils import process_vision_info
+import torch
 from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
 
 
@@ -26,7 +26,7 @@ class Qwen2_5_VLModel(ModelInterface):
 
     def __init__(
         self,
-        model_config: Dict[str, Any]
+        model_config: dict[str, Any]
     ) -> None:
         """Инициализирует модель.
 
@@ -52,21 +52,21 @@ class Qwen2_5_VLModel(ModelInterface):
             "cache_dir": "model_cache",
             "device_map": "auto"
         }
-        
+
         default_specific_params = {
             "min_pixels": 256 * 28 * 28,    # 200,704 - согласно документации
-            "max_pixels": 1280 * 28 * 28    # 1,003,520 - согласно документации  
+            "max_pixels": 1280 * 28 * 28    # 1,003,520 - согласно документации
         }
-        
+
         # Применяем конфигурацию поверх значений по умолчанию
         self.common_params = default_common_params.copy()
         self.common_params.update(model_config.get("common_params", {}))
-        
+
         self.specific_params = default_specific_params.copy()
         self.specific_params.update(model_config.get("specific_params", {}))
-        
+
         self.framework = "Hugging_Face"
-        
+
         # Проверяем, указан ли attn_implementation в specific_params
         if "attn_implementation" in self.specific_params:
             attn_implementation = self.specific_params["attn_implementation"]
@@ -125,7 +125,7 @@ class Qwen2_5_VLModel(ModelInterface):
     # Внутренние сервисные методы
     # ------------------------------------------------------------------
 
-    def _generate_answer(self, messages: List[dict]) -> str:
+    def _generate_answer(self, messages: list[dict]) -> str:
         """Запускает пайплайн инференса для переданных сообщений.
 
         Args:
@@ -166,7 +166,7 @@ class Qwen2_5_VLModel(ModelInterface):
             clean_up_tokenization_spaces=False,
         )[0]
 
-    def get_messages(self, images: List[Any], prompt: str) -> List[dict]:
+    def get_messages(self, images: list[Any], prompt: str) -> list[dict]:
         """Формирует список сообщений (один элемент) для нескольких изображений.
 
         Args:
@@ -211,7 +211,7 @@ class Qwen2_5_VLModel(ModelInterface):
         messages = [self.get_message(image, prompt)]
         return self._generate_answer(messages)
 
-    def predict_on_images(self, images: List[Any], prompt: str) -> str:
+    def predict_on_images(self, images: list[Any], prompt: str) -> str:
         """Генерирует ответ по списку изображений.
 
         Args:
@@ -229,19 +229,19 @@ _models_registered = False
 
 def register_models() -> None:
     """Регистрирует модели семейства Qwen2.5-VL в ModelFactory.
-    
+
     Эта функция должна быть вызвана явно для регистрации модели.
     Такой подход предотвращает случайное удаление импорта статическими анализаторами.
     Функция идемпотентна - повторные вызовы не будут дублировать регистрацию.
     """
     global _models_registered
-    
+
     if _models_registered:
         return
-    
+
     from model_interface.model_factory import ModelFactory
-    
+
     ModelFactory.register_model("Qwen2.5-VL", "model_qwen2_5_vl.models:Qwen2_5_VLModel")
     # ModelFactory уже логирует успешную регистрацию, дублировать не нужно
-    
+
     _models_registered = True

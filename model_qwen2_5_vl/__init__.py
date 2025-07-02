@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 # Публичные константы -------------------------------------------------------
 
@@ -33,8 +33,8 @@ def create_qwen_model_config(
     cache_dir: str = "model_cache",
     device_map: str = "auto",
     system_prompt: str = "",
-    specific_params: Optional[Dict[str, Any]] = None,
-) -> Dict[str, Any]:
+    specific_params: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Сформировать вложенный конфиг для ModelFactory.
 
     Parameters
@@ -71,15 +71,15 @@ def initialize_qwen_model(
     cache_dir: str = "model_cache",
     device_map: str = "auto",
     system_prompt: str = "",
-    specific_params: Optional[Dict[str, Any]] = None,
+    specific_params: dict[str, Any] | None = None,
 ):
     """Упрощённая инициализация модели Qwen-2.5-VL.
 
     Возвращает готовый объект, реализующий ``ModelInterface``.
     """
-    
+
     from model_interface.model_factory import ModelFactory
-    
+
     # Регистрируем модели перед использованием
     register_models()
 
@@ -106,7 +106,7 @@ __all__ = [
 
 def register_models() -> None:
     """Регистрирует модели семейства Qwen2.5-VL в ModelFactory.
-    
+
     Эта функция может быть вызвана напрямую для явной регистрации модели.
     """
     from model_qwen2_5_vl.models import register_models as _register_models
