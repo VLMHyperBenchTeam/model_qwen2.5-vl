@@ -10,9 +10,9 @@ Google-style docstrings на русском языке используются 
 
 from typing import Any
 
+import torch
 from model_interface.model_interface import ModelInterface
 from qwen_vl_utils import process_vision_info
-import torch
 from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
 
 
@@ -24,10 +24,7 @@ class Qwen2_5_VLModel(ModelInterface):
     несколькими изображениями.
     """
 
-    def __init__(
-        self,
-        model_config: dict[str, Any]
-    ) -> None:
+    def __init__(self, model_config: dict[str, Any]) -> None:
         """Инициализирует модель.
 
         Args:
@@ -41,7 +38,8 @@ class Qwen2_5_VLModel(ModelInterface):
                     },
                     "specific_params": {
                         "min_pixels": 256 * 28 * 28,
-                        "max_pixels": 1280 * 28 * 28
+                        "max_pixels": 1280 * 28 * 28,
+                        "max_new_tokens": 512
                     }
                 }
         """
@@ -50,12 +48,13 @@ class Qwen2_5_VLModel(ModelInterface):
             "model_name": "Qwen2.5-VL-7B-Instruct",
             "system_prompt": "",
             "cache_dir": "model_cache",
-            "device_map": "auto"
+            "device_map": "auto",
         }
 
         default_specific_params = {
-            "min_pixels": 256 * 28 * 28,    # 200,704 - согласно документации
-            "max_pixels": 1280 * 28 * 28    # 1,003,520 - согласно документации
+            "min_pixels": 256 * 28 * 28,  # 200,704 - согласно документации
+            "max_pixels": 1280 * 28 * 28,  # 1,003,520 - согласно документации
+            "max_new_tokens": 512,
         }
 
         # Применяем конфигурацию поверх значений по умолчанию
@@ -70,7 +69,9 @@ class Qwen2_5_VLModel(ModelInterface):
         # Проверяем, указан ли attn_implementation в specific_params
         if "attn_implementation" in self.specific_params:
             attn_implementation = self.specific_params["attn_implementation"]
-            print(f"INFO: Используется принудительно заданная реализация внимания: {attn_implementation}")
+            print(
+                f"INFO: Используется принудительно заданная реализация внимания: {attn_implementation}"
+            )
         else:
             # Проверяем доступность flash_attn без импорта модуля (избегаем F401)
             import importlib.util  # локальный импорт, чтобы не тянуть в глобалы
@@ -80,7 +81,9 @@ class Qwen2_5_VLModel(ModelInterface):
                 print("INFO: Используется FlashAttention2 для оптимизации производительности")
             else:
                 attn_implementation = "eager"
-                print("WARNING: flash_attn не установлен, используется стандартная реализация внимания")
+                print(
+                    "WARNING: flash_attn не установлен, используется стандартная реализация внимания"
+                )
 
         # default: Load the model on the available device(s)
         model_path = f"Qwen/{self.common_params['model_name']}"
@@ -93,7 +96,9 @@ class Qwen2_5_VLModel(ModelInterface):
         )
 
         # default processor
-        self.processor = AutoProcessor.from_pretrained(model_path, cache_dir=self.common_params["cache_dir"])
+        self.processor = AutoProcessor.from_pretrained(
+            model_path, cache_dir=self.common_params["cache_dir"]
+        )
 
     def get_message(self, image: Any, prompt: str) -> dict:
         """Формирует сообщение в формате Qwen-VL.
@@ -114,6 +119,7 @@ class Qwen2_5_VLModel(ModelInterface):
                     "image": image,
                     "min_pixels": self.specific_params["min_pixels"],
                     "max_pixels": self.specific_params["max_pixels"],
+                    "max_new_tokens": self.specific_params["max_new_tokens"],
                 },
                 {"type": "text", "text": prompt},
             ],
@@ -140,7 +146,9 @@ class Qwen2_5_VLModel(ModelInterface):
         # process_vision_info может возвращать 2 или 3 элемента в зависимости от версии
         vision_info = process_vision_info(messages)  # type: ignore
         if isinstance(vision_info, tuple) and len(vision_info) == 3:  # type: ignore[arg-type]
-            image_inputs, video_inputs, _ = vision_info  # compat с более старыми версиями, где возвращается 3 значения
+            image_inputs, video_inputs, _ = (
+                vision_info  # compat с более старыми версиями, где возвращается 3 значения
+            )
         else:
             image_inputs, video_inputs = vision_info  # type: ignore[assignment]
         inputs = self.processor(
@@ -151,7 +159,8 @@ class Qwen2_5_VLModel(ModelInterface):
             return_tensors="pt",
         ).to(self.model.device)
 
-        generated_ids = self.model.generate(**inputs, max_new_tokens=512)
+        max_new_tokens = self.specific_params["max_new_tokens"]
+        generated_ids = self.model.generate(**inputs, max_new_tokens=max_new_tokens)
         # Приводим к list для избежания ошибок статического анализа ("Never is not iterable")
         in_ids_list = list(inputs.input_ids)  # type: ignore[arg-type]
         gen_ids_list = list(generated_ids)  # type: ignore[arg-type]
@@ -186,6 +195,7 @@ class Qwen2_5_VLModel(ModelInterface):
                             "image": img,
                             "min_pixels": self.specific_params["min_pixels"],
                             "max_pixels": self.specific_params["max_pixels"],
+                            "max_new_tokens": self.specific_params["max_new_tokens"],
                         }
                         for img in images
                     ],
@@ -226,6 +236,7 @@ class Qwen2_5_VLModel(ModelInterface):
 
 # Флаг для предотвращения повторной регистрации
 _models_registered = False
+
 
 def register_models() -> None:
     """Регистрирует модели семейства Qwen2.5-VL в ModelFactory.
